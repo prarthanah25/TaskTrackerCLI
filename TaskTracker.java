@@ -152,38 +152,46 @@ public class TaskTracker {
             return tasks;
 
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = br.readLine()) != null) {
-                sb.append(line.trim());
-            }
-            String json = sb.toString();
-            if (json.startsWith("[") && json.endsWith("]")) {
-                json = json.substring(1, json.length() - 1);
-                String[] items = json.split("\\},\\{");
-                for (int i = 0; i < items.length; i++) {
-                    String item = items[i];
+            String json = br.lines().reduce("", String::concat).trim();
+            if (json.isEmpty() || json.equals("[]"))
+                return tasks;
+
+            json = json.substring(1, json.length() - 1); // remove [ and ]
+            String[] items = json.split("\\},\\{");
+
+            for (String item : items) {
+                try {
                     if (!item.startsWith("{"))
                         item = "{" + item;
                     if (!item.endsWith("}"))
                         item = item + "}";
+
                     Map<String, String> map = new HashMap<>();
-                    item = item.substring(1, item.length() - 1);
-                    String[] fields = item.split("\",\"");
+                    String inner = item.substring(1, item.length() - 1);
+                    String[] fields = inner.split("\",\"");
                     for (String f : fields) {
                         String[] kv = f.replace("\"", "").split(":", 2);
-                        map.put(kv[0], kv[1]);
+                        if (kv.length == 2)
+                            map.put(kv[0], kv[1]);
                     }
-                    Task t = new Task(Integer.parseInt(map.get("id")), map.get("description"));
-                    t.status = map.get("status");
-                    t.createdAt = map.get("createdAt");
-                    t.updatedAt = map.get("updatedAt");
+
+                    int id = Integer.parseInt(map.getOrDefault("id", "0"));
+                    String desc = map.getOrDefault("description", "");
+                    Task t = new Task(id, desc);
+                    t.status = map.getOrDefault("status", "todo");
+                    t.createdAt = map.getOrDefault("createdAt", LocalDateTime.now().toString());
+                    t.updatedAt = map.getOrDefault("updatedAt", t.createdAt);
                     tasks.add(t);
+                } catch (Exception ex) {
+                    // skip corrupted task
+                    System.out.println("Skipping corrupted task entry");
                 }
             }
+
         } catch (IOException e) {
             System.out.println("Error loading tasks: " + e.getMessage());
         }
+
         return tasks;
     }
 
