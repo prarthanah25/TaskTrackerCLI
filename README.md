@@ -30,6 +30,7 @@ A **simple Java Command Line Interface (CLI) app** to manage your tasks with JSO
 ## 📁 Project URL
 
 https://github.com/prarthanah25/TaskTrackerCLI
+https://roadmap.sh/projects/task-tracker
 
 ---
 
