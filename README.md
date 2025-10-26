@@ -18,10 +18,12 @@ A **simple Java Command Line Interface (CLI) app** to manage your tasks with JSO
    ```bash
    cd path/to/TaskTrackerCLI
 2. Compile the Java program
-  javac TaskTracker.java
+   ```bash
+    javac TaskTracker.java
   
 3. Run the program
-  java TaskTracker
+    ```bash
+     java TaskTracker
 
 ---
 
