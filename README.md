@@ -1,6 +1,6 @@
 # ✅ TaskTrackerCLI
 
-A **simple Java Command Line Interface (CLI) app** to manage your tasks with JSON storage
+A **simple Java Command Line Interface (CLI) app** to manage your tasks with JSON storage.
 
 
 ## 🛠 Features
